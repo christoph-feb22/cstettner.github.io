@@ -1,0 +1,92 @@
+---
+layout: post
+title:  "UWP HTTP Client with Xamarin"
+date:   2017-02-25 16:45:53 +0100
+---
+
+As I needed a HTTP Client in office and watched out in the Windows Store the search result was empty.
+So I decicded to write a small app and put it into the Windows Store.
+I know that out there are many really good HTTP clients, but I was also on the look for a small side project to put into the Store.
+
+I thought about writing the app as a plain UWP app, but I wanted to write a Xamarin app. As a benefit I can also put the app into other stores if I want to.
+
+The code of the app is on github, you can find it here: <https://github.com/cstettner/RESTly>
+
+The app was made with Xamarin.Forms and no platform specific code was needed for the UWP app.
+
+As the app is very simple, there was only a single method needed to put the most important logic in.
+
+```c#
+private async Task DoSubmitAsync()
+{
+    try
+    {
+        ResponseHeader = "";
+        ResponseBody = "";
+        ResponseContentType = "";
+
+        var client = new HttpClient();
+        var request = new HttpRequestMessage();
+        request.RequestUri = new Uri(RequestUrl);
+
+        if (!string.IsNullOrWhiteSpace(RequestBody))
+        {
+            if (string.IsNullOrWhiteSpace(RequestContentType))
+                throw new ContentTypeException("Please select a content type.");
+
+            request.Content = new StringContent(RequestBody, Encoding.UTF8, RequestContentType);
+        }
+
+        switch (RequestMethod)
+        {
+            case "GET":
+                request.Method = HttpMethod.Get;
+                break;
+            case "POST":
+                request.Method = HttpMethod.Post;
+                break;
+            case "PUT":
+                request.Method = HttpMethod.Put;
+                break;
+            case "DELETE":
+                request.Method = HttpMethod.Delete;
+                break;
+        }
+
+        var response = await client.SendAsync(request);
+
+        ResponseBody = await response.Content.ReadAsStringAsync();
+        ResponseHeader = response.Headers.ToString();
+        ResponseContentType = response.Content.Headers.ContentType.MediaType;
+    }
+    catch (ContentTypeException e)
+    {
+        await _dialogs.AlertAsync("Please select a content type.", "Error", "OK");
+    }
+    catch (FormatException e)
+    {
+        await _dialogs.AlertAsync("The URL is malformed. Please change the URL and try again.", "Error", "OK");
+    }
+    catch (Exception e)
+    {
+        await _dialogs.AlertAsync("An unexpected error occured: " + e.Message, "Error", "OK");
+    }
+}
+```
+
+The implementation of the request is simple. For the error case dialogs I took the Package [Acr.UsrDialogs](https://github.com/aritchie/userdialogs), which made really good dialogs.
+
+For the dialog plugin you need to pass an instance of the UserDialog into your ViewModel.
+```c#
+public MainPage()
+{
+    InitializeComponent();
+    BindingContext = new RestViewModel(UserDialogs.Instance);
+}
+```
+In the ViewModel you can use it then without further modification and open up the dialogs. A full list of possible dialogs is on the [project site](https://github.com/aritchie/userdialogs).
+The documentation of the plugin is a bit to less so you may need to just try it.
+
+You can download RESTly from the [Windows Store](https://www.microsoft.com/store/apps/9nqd7m34v52h)
+
+If you found a bug in RESTly or need some additional features, create an issue on github.
