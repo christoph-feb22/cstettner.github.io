@@ -1,0 +1,7 @@
+---
+layout: post
+title:  "Hi there"
+date:   2017-02-25 11:06:53 +0100
+---
+First post of my new blog. From now on I try to blog regularly about all the technical stuff I do.
+So I just want to say: Hi there!
