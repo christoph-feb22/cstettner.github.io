@@ -9,9 +9,9 @@ In my experience, the library is really cool and makes good error messages.
 Today I get an ArgumentException with the message: "Can not add JProperty to JArray".
 The confusing thing was, there was not JProperty added to a JArray.
 
-![Exception message](./Images/Exception.png "Exception message")
+![Exception message]({{ site.url }}/Assets//Images/Exception.png "Exception message")
 
 After splitting the statement, the error was identified. The correct error message should be: "Can not add JProperty to JProperty".
 So I added a JObject in between the to JProperties the error was fixed.
 
-![Fixed code](./Images/Fix.png "Fixed code")
+![Fixed code]({{ site.url }}/Assets/Images/Fix.png "Fixed code")
