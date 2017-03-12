@@ -1,0 +1,31 @@
+---
+layout: post
+title:  "Using dotnet watch with ASP.NET Core in Visual Studio 2017"
+date:   2017-03-12 17:08:53 +0100
+---
+
+First you need to add the command line tools to the project settings. To edit the settings, open the context menu of your project and click on "Edit _ProjectName_.csproj" to open up you project settings. Note that with the new Visual Studio 2017, you don't need to close and reopen your project any more.
+Add the following line to your csproj file.
+```xml
+<DotNetCliToolReference Include="Microsoft.DotNet.Watcher.Tools" Version="1.0.0" />
+```
+
+After you've added the cli tools, you need to create a startup profile to launch the dotnet watch command.
+Open the launchSettings.json file. You can find it in the Solution Explorer under Properties.
+Add the following profile. 
+```json
+"Watch": {
+            "executablePath": "C:\\Program Files\\dotnet\\dotnet.exe",
+            "commandLineArgs": "watch run",
+            "environmentVariables": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        }
+```
+
+With this profile, you will have an additional launch option to select, named "Watch". If you run this command a command prompt will open and run the dotnet core watch command.
+Your application runs on port 5000. Every change you make will deployed to your server and you just need to refresh the browser.
+
+To stop the running server you need to close the command prompt. Stopping the execution in Visual Studio will have no effect, because it only executes the startup command of dotnet watch.
+
+With these settings you will have a much smoother work experience while developing web applications on ASP.NET Core.
